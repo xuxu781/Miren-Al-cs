@@ -1,0 +1,34 @@
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	"log"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
+func main() {
+	dsn := "fdddbdbdfb:fdddbdbdfb@tcp(127.0.0.1:3306)/fdddbdbdfb?charset=utf8mb4&parseTime=True&loc=Local"
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	rows, err := db.Query("SELECT id, logical_model, provider, connection_url FROM lty_model_upstreams LIMIT 3")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id int
+		var logicalModel, provider, connectionUrl string
+		err = rows.Scan(&id, &logicalModel, &provider, &connectionUrl)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("ID: %d, Model: %s, Provider: %s, URL: %s\n", id, logicalModel, provider, connectionUrl)
+	}
+}
